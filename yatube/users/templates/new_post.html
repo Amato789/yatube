@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% block title %}Создать новый пост{% endblock %}
+{% block title %}{% if is_edit %}Редактирование записи{% else %}Создать новый пост{% endif %}{% endblock %}
 {% block content %}
 {% load user_filters %}
 
 <div class="row justify-content-center">
     <div class="col-md-8 p-5">
         <div class="card">
-            <div class="card-header">Создать новый пост</div>
+            <div class="card-header">{% if is_edit %}Редактировать запись{% else %}Создать новый пост{% endif %}</div>
             <div class="card-body">
                 {% for error in form.errors %}
                 <div class="alert alert-danger" role="alert">
@@ -14,7 +14,7 @@
                 </div>
                 {% endfor %}
 
-                <form method="post" action="{% url 'new_post' %}">
+                <form method="post" action="{% if is_edit %}{% url 'post_edit' post.pk %}{% else %}{% url 'new_post' %}{% endif %}">
                     {% csrf_token %}
                     {% for field in form %}
                         <div class="form-group row" aria-required=
@@ -34,7 +34,7 @@
                     {% endfor %}
                     <div class="col-md-6 offset-md-4">
                         <button type="submit" class="btn btn-primary">
-                            Добавить пост
+                            {% if is_edit %}Редактировать{% else %}Добавить пост{% endif %}
                         </button>
                     </div>
                 </form>
