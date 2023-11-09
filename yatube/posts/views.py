@@ -33,6 +33,11 @@ def new_post(request):
         post = form.save(commit=False)
         post.author = request.user
         post.save()
+        # send_msg(
+        #     request.user.email,
+        #     post.text,
+        #     post.group
+        # )
         return redirect('index')
     return render(request, 'new_post.html', {'form': form})
 
