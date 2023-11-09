@@ -14,7 +14,11 @@
                 </div>
                 {% endfor %}
 
-                <form method="post" action="{% if is_edit %}{% url 'post_edit' post.pk %}{% else %}{% url 'new_post' %}{% endif %}">
+                <form method="post" action="{% if is_edit %}
+                                                {% url 'post_edit' post.pk %}
+                                            {% else %}
+                                                {% url 'new_post' %}
+                                            {% endif %}" enctype="multipart/form-data">
                     {% csrf_token %}
                     {% for field in form %}
                         <div class="form-group row" aria-required=
