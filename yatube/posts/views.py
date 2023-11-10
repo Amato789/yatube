@@ -61,7 +61,7 @@ def post_detail(request, post_id):
 def post_edit(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     if request.user != post.author:
-        return redirect('post_detail', post_id=post.pk)
+        return redirect('post', post_id=post.pk)
     form = PostForm(
         request.POST or None,
         files=request.FILES or None,
@@ -71,7 +71,7 @@ def post_edit(request, post_id):
     if form.is_valid():
         form = form.save(commit=False)
         form.save()
-        return redirect('post_detail', post_id=post.pk)
+        return redirect('post', post_id=post.pk)
     return render(request, 'new_post.html', {'form': form, 'is_edit': is_edit, 'post': post})
 
 
@@ -92,5 +92,5 @@ def add_comment(request, post_id):
         comment.author = request.user
         comment.post = post
         comment.save()
-        return redirect('post_detail', post.id)
+        return redirect('post', post.id)
     return render(request, 'add_comment', {'form': form, 'items': items})
