@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Post, Group, User
-from .forms import PostForm
+from .forms import PostForm, CommentForm
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 
@@ -53,7 +53,9 @@ def profile(request, username):
 
 def post_detail(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
-    return render(request, 'post_detail.html', {"post": post})
+    form = CommentForm(instance=None)
+    items = post.comments.order_by('-created').all()
+    return render(request, 'post_detail.html', {"post": post, 'form': form, 'items': items})
 
 
 def post_edit(request, post_id):
@@ -79,3 +81,16 @@ def page_not_found(request, exception):
 
 def server_error(request):
     return render(request, "misc/500.html", status=500)
+
+
+def add_comment(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    form = CommentForm(request.POST or None)
+    items = post.comments.order_by('-created').all()
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.author = request.user
+        comment.post = post
+        comment.save()
+        return redirect('post_detail', post.id)
+    return render(request, 'add_comment', {'form': form, 'items': items})
